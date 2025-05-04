@@ -1,4 +1,106 @@
----
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  Picker,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+
+const planets = [
+  { name: 'Mercury', image: require('./assets/mercury.png'), description: 'Mercury is the smallest planet.' },
+  { name: 'Venus', image: require('./assets/venus.png'), description: 'Venus is the hottest planet.' },
+  { name: 'Earth', image: require('./assets/earth.png'), description: 'Earth is our home planet.' },
+  { name: 'Mars', image: require('./assets/mars.png'), description: 'Mars is known as the Red Planet.' },
+  { name: 'Jupiter', image: require('./assets/jupiter.png'), description: 'Jupiter is the largest planet.' },
+  { name: 'Saturn', image: require('./assets/saturn.png'), description: 'Saturn has beautiful rings.' },
+  { name: 'Uranus', image: require('./assets/uranus.png'), description: 'Uranus rotates on its side.' },
+  { name: 'Neptune', image: require('./assets/neptune.png'), description: 'Neptune is the farthest planet.' },
+];
+
+const quizData = [
+  { question: 'Which planet is known as the Red Planet?', options: ['Venus', 'Mars', 'Jupiter', 'Saturn'], answer: 'Mars' },
+  { question: 'Which planet has rings?', options: ['Earth', 'Mars', 'Saturn', 'Neptune'], answer: 'Saturn' },
+  { question: 'Which is the smallest planet?', options: ['Mercury', 'Venus', 'Earth', 'Mars'], answer: 'Mercury' },
+];
+
+export default function App() {
+  const [language, setLanguage] = useState('en');
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showQuiz, setShowQuiz] = useState(false);
+
+  const handleOptionPress = (option) => {
+    if (option === quizData[quizIndex].answer) {
+      setScore(score + 1);
+    }
+
+    if (quizIndex + 1 < quizData.length) {
+      setQuizIndex(quizIndex + 1);
+    } else {
+      alert(`Quiz Completed! Your score: ${score + (option === quizData[quizIndex].answer ? 1 : 0)}`);
+      setShowQuiz(false);
+      setQuizIndex(0);
+      setScore(0);
+    }
+  };
+
+  if (showQuiz) {
+    const current = quizData[quizIndex];
+    return (
+      <View style={styles.quizContainer}>
+        <Text style={styles.quizQuestion}>{current.question}</Text>
+        {current.options.map((opt, idx) => (
+          <TouchableOpacity key={idx} style={styles.optionBtn} onPress={() => handleOptionPress(opt)}>
+            <Text>{opt}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView style={styles.container}>
+      <Text style={styles.header}>Welcome to Day and Night Space Foundation</Text>
+
+      <Text style={styles.label}>Select Language:</Text>
+      <Picker
+        selectedValue={language}
+        onValueChange={(itemValue) => setLanguage(itemValue)}
+        style={styles.picker}
+      >
+        <Picker.Item label="English" value="en" />
+        <Picker.Item label="Hindi" value="hi" />
+      </Picker>
+
+      {planets.map((planet, index) => (
+        <View key={index} style={styles.planetBox}>
+          <Text style={styles.planetName}>{planet.name}</Text>
+          <Image source={planet.image} style={styles.image} />
+          <Text style={styles.description}>{planet.description}</Text>
+        </View>
+      ))}
+
+      <TouchableOpacity style={styles.quizBtn} onPress={() => setShowQuiz(true)}>
+        <Text style={{ color: 'white' }}>Start Quiz</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { padding: 20, backgroundColor: '#f0f8ff' },
+  header: { fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
+  label: { fontSize: 16 },
+  picker: { marginBottom: 20 },
+  planetBox: {
+    marginBottom: 30,
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',--
 title: Create your first app
 
 description: In this chapter, learn how to create a new Expo project.
